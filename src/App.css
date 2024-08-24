@@ -1,42 +1,30 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
+/*Loader css from https://css-loaders.com/*/
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+/* HTML: <div class="loadaer"></div> */
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 40px;
+  aspect-ratio: 1;
+  display: flex;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+.loader:before,
+.loader:after {
+  content: "";
+  flex: 1;
+  background: #f03355;
+  animation: l21 2s infinite;
+  border-radius: 100px 0 0 100px;
+  transform-origin: top right;
+  transform: translateY(calc(var(--s,1)*0%)) rotate(0);
 }
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.loader:after {
+  transform-origin: bottom left;
+  border-radius: 0 100px 100px 0;
+  --s:-1;
 }
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+@keyframes l21 {
+  33%  {transform: translate(0,calc(var(--s,1)*50%)) rotate(0)}
+  66%  {transform: translate(0,calc(var(--s,1)*50%)) rotate(-90deg)}
+  90%,
+  100% {transform: translate(calc(var(--s,1)*-100%),calc(var(--s,1)*50%))  rotate(-90deg)}
 }

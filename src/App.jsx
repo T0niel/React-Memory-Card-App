@@ -1,13 +1,13 @@
 import './App.css';
 import Header from './components/Header';
-import Score from './components/Score';
+import Game from './components/Game';
 
 function App() {
   return (
-    <>
+    <div className='max-w-[1600px] m-[auto]'>
       <Header content="Pokémon memory card" />
-      <Score score={0} bestScore={0} />{' '}
-    </>
+      <Game />
+    </div>
   );
 }
 
