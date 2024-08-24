@@ -18,9 +18,29 @@ async function getPokemonList(amount) {
   return details;
 }
 
+function shuffle(org) {
+  const array = [...org];
+  let currentIndex = array.length;
+
+  while (currentIndex != 0) {
+    let randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ];
+  }
+
+  return array;
+}
+
 const REQUEST_AMOUNT = 20;
 function Cards() {
   const [pokemonDetails, setPokemonDetails] = useState([]);
+  const [score, setScore] = useState(0);
+  const [bestScore, setBestScore] = useState(0);
+  const [picked, setPicked] = useState([]);
 
   useEffect(() => {
     let stop = false;
@@ -28,6 +48,7 @@ function Cards() {
     async function fetchDetails() {
       const pokemonList = await getPokemonList(REQUEST_AMOUNT);
       if (!stop) {
+        shuffle(pokemonList);
         setPokemonDetails(pokemonList);
       }
     }
@@ -39,30 +60,62 @@ function Cards() {
     };
   }, []);
 
-  console.log(pokemonDetails);
+  function addPicked(name){
+    setPicked([...picked, name]);
+  }
+
+  //On card click
+  function onClick(name) {
+    if (picked.includes(name)) {
+      if (bestScore < score) {
+        setBestScore(score);
+      }
+
+      setScore(0);
+      setPokemonDetails(shuffle(pokemonDetails));
+      setPicked([]);
+      return;
+    }
+
+    setPokemonDetails(shuffle(pokemonDetails));
+    addPicked(name);
+    const currScore = score + 1;
+    setScore(currScore)
+
+    if(currScore > bestScore){
+      setBestScore(currScore);
+    }
+
+  }
 
   if (pokemonDetails.length === 0) {
-    return <Load></Load>; 
+    return <Load></Load>;
   }
 
   return (
-    <div className="p-2 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
-      {pokemonDetails.map((pokemon) => (
-        <Card key={pokemon.name} img={pokemon.image} name={pokemon.name} />
-      ))}
-    </div>
+    <>
+      <Score score={score} bestScore={bestScore} />
+      <div className="p-2 grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4">
+        {pokemonDetails.map((pokemon) => (
+          <Card onClick={onClick} key={pokemon.name} img={pokemon.image} name={pokemon.name} />
+        ))}
+      </div>
+    </>
   );
 }
 
-function Card({ img, name }) {
+function Card({ img, name, onClick }) {
   return (
-    <div className="flex flex-col border-2 text-center">
-      <img src={img} alt={name}></img>
-      <p>{`${name.at(0).toUpperCase()}${name.slice(1)}`}</p>
+    <div className="flex flex-col border-2 text-center cursor-pointer" onClick={() => {
+      onClick(name);
+    }}>
+      <img src={img} alt={name} className="m-2"></img>
+      <p className="text-xl pb-2">{`${name.at(0).toUpperCase()}${name.slice(
+        1
+      )}`}</p>
     </div>
   );
 }
-
 
 //ms
 const LOAD_TIME = 100;
@@ -95,9 +148,7 @@ function Load() {
 export default function Game() {
   return (
     <div>
-      <Score score={0} bestScore={0} />
       <Cards />
     </div>
   );
 }
-
