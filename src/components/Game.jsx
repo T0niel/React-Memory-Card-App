@@ -11,7 +11,17 @@ async function getPokemonList(amount) {
     pokemonList.map(async (pokemon) => {
       const resp = await fetch(pokemon.url);
       const json = await resp.json();
-      return { name: json.name, image: json.sprites.front_default };
+      const types = json.types.map((typeInfo) => typeInfo.type.name);
+      const abilities = json.abilities.map(
+        (abilityInfo) => abilityInfo.ability.name
+      );
+
+      return {
+        name: json.name,
+        image: json.sprites.front_default,
+        types: types,
+        abilities: abilities,
+      };
     })
   );
 
@@ -35,7 +45,7 @@ function shuffle(org) {
   return array;
 }
 
-const REQUEST_AMOUNT = 20;
+const REQUEST_AMOUNT = 30;
 function Cards() {
   const [pokemonDetails, setPokemonDetails] = useState([]);
   const [score, setScore] = useState(0);
@@ -60,7 +70,7 @@ function Cards() {
     };
   }, []);
 
-  function addPicked(name){
+  function addPicked(name) {
     setPicked([...picked, name]);
   }
 
@@ -78,14 +88,23 @@ function Cards() {
     }
 
     setPokemonDetails(shuffle(pokemonDetails));
-    addPicked(name);
+    addPicked(name);  
     const currScore = score + 1;
-    setScore(currScore)
 
-    if(currScore > bestScore){
+    if (currScore >= REQUEST_AMOUNT){
+      alert('You won!');
+      setBestScore(currScore);
+      setScore(0);
+      setPokemonDetails(shuffle(pokemonDetails));
+      setPicked([]);
+      return;
+    } 
+    
+    setScore(currScore);
+
+    if (currScore > bestScore) {
       setBestScore(currScore);
     }
-
   }
 
   if (pokemonDetails.length === 0) {
@@ -95,9 +114,14 @@ function Cards() {
   return (
     <>
       <Score score={score} bestScore={bestScore} />
-      <div className="p-2 grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4">
+      <div className="p-2 grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-2">
         {pokemonDetails.map((pokemon) => (
-          <Card onClick={onClick} key={pokemon.name} img={pokemon.image} name={pokemon.name} />
+          <Card
+            onClick={onClick}
+            key={pokemon.name}
+            img={pokemon.image}
+            name={pokemon.name}
+          />
         ))}
       </div>
     </>
@@ -106,9 +130,12 @@ function Cards() {
 
 function Card({ img, name, onClick }) {
   return (
-    <div className="flex flex-col border-2 text-center cursor-pointer" onClick={() => {
-      onClick(name);
-    }}>
+    <div
+      className="flex flex-col border-2 text-center cursor-pointer"
+      onClick={() => {
+        onClick(name);
+      }}
+    >
       <img src={img} alt={name} className="m-2"></img>
       <p className="text-xl pb-2">{`${name.at(0).toUpperCase()}${name.slice(
         1

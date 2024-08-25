@@ -12,6 +12,9 @@ export default {
       animation: {
         bounce: 'bounce 1s ease-in-out',
       },
+      backgroundImage: {
+        'white-pattern': 'url(/backgroundPattern.webp)'
+      }
     },
   },
   plugins: [],
