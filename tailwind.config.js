@@ -13,8 +13,9 @@ export default {
         bounce: 'bounce 1s ease-in-out',
       },
       backgroundImage: {
-        'white-pattern': 'url(/backgroundPattern.webp)'
-      }
+        'light-pattern': 'url(/backgroundPatternLight.webp)', 
+        'dark-pattern': 'url(/backgroundPatternDark.webp)',
+      },
     },
   },
   plugins: [],
